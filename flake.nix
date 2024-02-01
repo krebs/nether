@@ -12,6 +12,11 @@
       clanName = "nether";
       directory = self;
       machines.controller = {
+        imports = [
+          self.nixosModules.controller
+          self.nixosModules.hosts
+        ];
+        services.getty.autologinUser = "root";
         clan.networking.zerotier = {
           controller = {
             enable = true;
@@ -27,7 +32,7 @@
         in
           nixpkgs.lib.nameValuePair name ((nixpkgs.lib.importJSON ./hosts/${file}) // { inherit name; })
       ) (builtins.readDir ./hosts);
-      network-id = "ccc5da5295c853d4";
+      network-id = builtins.readFile ./machines/controller/facts/zerotier-network-id;
       ipForHost = nwid: id: builtins.concatStringsSep ":" ((p: builtins.substring (p * 4) 4 "${nwid}9993${id}") 8);
     };
     nixosModules = {
