@@ -48,10 +48,13 @@
         systemd.services.nether-autoaccept = {
           wantedBy = [ "multi-user.target" ];
           after = [ "zerotierone.service" ];
-          path = [ pkgs.zerotier ];
-          serviceConfig.ExecStart = pkgs.writeScript "nether-autoaccept" (nixpkgs.lib.concatMapStringsSep "\n" (host: ''
-            ${clan-core.packages.${pkgs.system}.zerotier-members}/bin/zerotier-members allow ${host.address}
-          '') (nixpkgs.lib.attrValues self.lib.hosts));
+          path = [ clan-core.packages.x86_64-linux.zerotierone ];
+          serviceConfig.ExecStart = pkgs.writeScript "nether-autoaccept" ''
+            #!/bin/sh
+            ${nixpkgs.lib.concatMapStringsSep "\n" (host: ''
+              ${clan-core.packages.${pkgs.system}.zerotier-members}/bin/zerotier-members allow ${host.address}
+            '') (nixpkgs.lib.attrValues self.lib.hosts)}
+          '';
         };
       };
     };
