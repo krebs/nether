@@ -33,7 +33,7 @@
           nixpkgs.lib.nameValuePair name ((nixpkgs.lib.importJSON ./hosts/${file}) // { inherit name; })
       ) (builtins.readDir ./hosts);
       network-id = builtins.readFile ./machines/controller/facts/zerotier-network-id;
-      ipForHost = nwid: id: builtins.concatStringsSep ":" (builtins.genList (p: builtins.substring (p * 4) 4 "${nwid}9993${id}") 8);
+      ipForHost = nwid: id: builtins.concatStringsSep ":" (builtins.genList (p: builtins.substring (p * 4) 4 "fd${nwid}9993${id}") 8);
     };
     nixosModules = {
       hosts = {
