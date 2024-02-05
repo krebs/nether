@@ -29,7 +29,7 @@ imports = [
 ```
 
 ## Adding host to network
-
+First `git clone` this repository. Then
 for your host to be accepted into the network the id needs to be whitelisted.
 
 ```
