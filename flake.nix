@@ -67,7 +67,7 @@
           "${self.lib.ipForHost self.lib.network-id host.address} ${host.name}.n"
         ) (nixpkgs.lib.attrValues self.lib.hosts);
       };
-      zerotier = {
+      zerotier = { pkgs, ... }: {
         systemd.network.networks."09-zerotier" = {
           matchConfig.Name = "zt*";
           networkConfig = {
@@ -85,7 +85,7 @@
 
         services.zerotierone = {
           enable = true;
-          package = clan-core.packages.zerotierone;
+          package = clan-core.packages.${pkgs.system}.zerotierone;
           joinNetworks = [ self.lib.network-id ];
         };
 
