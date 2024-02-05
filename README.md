@@ -6,26 +6,40 @@ this is a flake which exports some functions to join the nether network
 
 If you are already using clan, you can just import this flake and configure it like this:
 
+flake.nix:
+```nix
+{
+  inputs = {
+    # Add this input for nether
+    nether.url = "github:Lassulus/nether";
+  }
+}
 ```
-...
-imports = [
-  self.nether.nixosModules.hosts
-];
-clan.networking.zerotier = {
-  networkId = "ccc5da5295c853d4";
-  name = "nether";
-};
+
+configuration.nix:
+```nix
+{inputs, ...}: {
+  imports = [
+    inputs.nether.nixosModules.hosts
+  ];
+  clan.networking.zerotier = {
+    networkId = "ccc5da5295c853d4";
+    name = "nether";
+  };
+}
 ```
 
 ## join without clan
 
 if you don't use clan or don't want this network as your primary. you can import our zerotier module:
 
-```
-imports = [
-  self.nether.nixosModules.hosts
-  self.nether.nixosModules.zerotier
-];
+```nix
+{inputs, ...}: {
+  imports = [
+    inputs.nether.nixosModules.hosts
+    inputs.nether.nixosModules.zerotier
+  ];
+}
 ```
 
 ## Adding host to network
