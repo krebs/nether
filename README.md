@@ -27,3 +27,13 @@ imports = [
   self.nether.nixosModules.zerotier
 ];
 ```
+
+## Adding host to network
+
+for your host to be accepted into the network the id needs to be whitelisted.
+
+```
+sudo zerotier-cli info -j | jq -c '{"address": .address}' > hosts/"$(hostname)".json
+```
+
+then create a PR with your host file
