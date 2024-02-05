@@ -68,7 +68,30 @@
         ) (nixpkgs.lib.attrValues self.lib.hosts);
       };
       zerotier = {
-        # TODO get module from clan-core here
+        systemd.network.networks."09-zerotier" = {
+          matchConfig.Name = "zt*";
+          networkConfig = {
+            LLMNR = true;
+            LLDP = true;
+            MulticastDNS = true;
+            KeepConfiguration = "static";
+          };
+        };
+
+        networking.firewall.allowedTCPPorts = [ 9993 ]; # zerotier
+        networking.firewall.allowedUDPPorts = [ 9993 ]; # zerotier
+
+        networking.networkmanager.unmanaged = [ "interface-name:zt*" ];
+
+        services.zerotierone = {
+          enable = true;
+          package = clan-core.packages.zerotierone;
+          joinNetworks = [ self.lib.network-id ];
+        };
+
+        # The official zerotier tcp relay no longer works: https://github.com/zerotier/ZeroTierOne/issues/2202
+        # So we host our own relay in https://git.clan.lol/clan/clan-infra
+        services.zerotierone.localConf.settings.tcpFallbackRelay = "65.21.12.51/4443";
       };
       controller = { pkgs, ... }: {
         systemd.services.nether-autoaccept = {
