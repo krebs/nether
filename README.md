@@ -50,4 +50,10 @@ for your host to be accepted into the network the id needs to be whitelisted.
 sudo zerotier-cli info -j | jq -c '{"address": .address}' > hosts/"$(hostname)".json
 ```
 
+Add multiple hosts via ssh:
+
+```
+for i in host1 host2; do ssh "root@$i.r" zerotier-cli info -j | jq -c '{"address": .address}' > hosts/"$i".json; done
+```
+
 then create a PR with your host file
