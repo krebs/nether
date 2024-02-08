@@ -6,44 +6,56 @@ this is a flake which exports some functions to join the nether network
 
 If you are already using clan, you can just import this flake and configure it like this:
 
-flake.nix:
 ```nix
-{
-  inputs = {
-    # Add this input for nether
-    nether.url = "github:Lassulus/nether";
+...
+imports = [
+  self.nether.nixosModules.hosts
+];
+clan.networking.zerotier = {
+  networkId = "ccc5da5295c853d4";
+  name = "nether";
+};
+```
+
+## Join with standalone flakes
+
+If you don't use cLAN network or
+don't want this network as your primary.
+You can import our zerotier module:
+
+```flake.nix
+inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+inputs.nether.url = "github:lassulus/nether";
+inputs.nether.inputs.nixpkgs.follows = "nixpkgs";
+
+ outputs = { self, nixpkgs, nether }: {
+    nixosConfigurations."mynixos" = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = {
+        inherit nether;
+      };
+      modules = [
+       ./configuration.nix
+       ./zerotier.nix
+      ];
+      ...
   }
-}
 ```
 
-configuration.nix:
-```nix
-{inputs, ...}: {
+```zerotier.nix
+{ self, config, pkgs, nether, ... }:
+{
   imports = [
-    inputs.nether.nixosModules.hosts
+        nether.nixosModules.hosts
+        nether.nixosModules.zerotier
   ];
-  clan.networking.zerotier = {
-    networkId = "ccc5da5295c853d4";
-    name = "nether";
-  };
-}
-```
 
-## join without clan
-
-if you don't use clan or don't want this network as your primary. you can import our zerotier module:
-
-```nix
-{inputs, ...}: {
-  imports = [
-    inputs.nether.nixosModules.hosts
-    inputs.nether.nixosModules.zerotier
-  ];
+    networking.extraHosts = nether.nixosModules.hosts.networking.extraHosts;
 }
 ```
 
 ## Adding host to network
-First `git clone` this repository. Then
+First fork and then `git clone` the repository. Then
 for your host to be accepted into the network the id needs to be whitelisted.
 
 ```
