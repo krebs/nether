@@ -1,4 +1,4 @@
-{ modulesPath, ... }:
+{ modulesPath, pkgs, ... }:
 
 {
   imports = [
@@ -17,4 +17,14 @@
   };
 
   swapDevices = [ ];
+
+  systemd.services.autoupdate = {
+    startAt = "hourly";
+    path = [ pkgs.nix ];
+    serviceConfig.ExecStart = pkgs.writers.writeDash "autoupdate" ''
+      set -efux
+      toplevel=$(nix build --refresh 'github:nixos/nixpkgs-merge-bot#nixosConfigurations.nixpkgs-merge-bot.config.system.build.toplevel' --print-out-paths)
+      "$toplevel"/bin/switch-to-configuration switch
+    '';
+  };
 }
