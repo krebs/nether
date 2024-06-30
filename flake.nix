@@ -9,7 +9,7 @@
   outputs = { self, nixpkgs, clan-core }:
   {
     inherit (clan-core.lib.buildClan {
-      clanName = "nether";
+      meta.name = "nether";
       directory = self;
       machines.controller = let
         ip = self.lib.ipForHost self.lib.network-id self.lib.hosts.controller.address;
