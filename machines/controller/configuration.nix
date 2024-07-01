@@ -23,5 +23,6 @@
     allowReboot = true;
     flake = "github:lassulus/nether#controller";
     dates = "*:0/10:00";
+    flags = [ "--refresh" ];
   };
 }
