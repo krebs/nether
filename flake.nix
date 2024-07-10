@@ -3,11 +3,21 @@
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-  inputs.clan-core.url = "git+https://git.clan.lol/clan/clan-core";
-  inputs.clan-core.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.flake-parts.url = "github:hercules-ci/flake-parts";
+  inputs.flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
-  outputs = { self, nixpkgs, clan-core }:
-  {
+  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
+  inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+  inputs.clan-core.url = "https://git.clan.lol/clan/clan-core/archive/main.tar.gz";
+  inputs.clan-core.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.clan-core.inputs.treefmt-nix.follows = "treefmt-nix";
+  inputs.clan-core.inputs.flake-parts.follows = "flake-parts";
+  inputs.clan-core.inputs.disko.follows = "";
+  inputs.clan-core.inputs.nixos-images.follows = "";
+  inputs.clan-core.inputs.sops-nix.follows = "";
+
+  outputs = { self, nixpkgs, clan-core }: {
     inherit (clan-core.lib.buildClan {
       meta.name = "nether";
       directory = self;
