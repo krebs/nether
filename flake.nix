@@ -17,7 +17,7 @@
   inputs.clan-core.inputs.nixos-images.follows = "";
   inputs.clan-core.inputs.sops-nix.follows = "";
 
-  outputs = { self, nixpkgs, clan-core }: {
+  outputs = { self, nixpkgs, clan-core, ... }: {
     inherit (clan-core.lib.buildClan {
       meta.name = "nether";
       directory = self;
