@@ -9,13 +9,14 @@
   inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
   inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
+  inputs.data-mesher.url = "https://git.clan.lol/clan/data-mesher/archive/main.tar.gz";
+  inputs.data-mesher.inputs.nixpkgs.follows = "nixpkgs";
+
   inputs.clan-core.url = "https://git.clan.lol/clan/clan-core/archive/main.tar.gz";
   inputs.clan-core.inputs.nixpkgs.follows = "nixpkgs";
   inputs.clan-core.inputs.treefmt-nix.follows = "treefmt-nix";
   inputs.clan-core.inputs.flake-parts.follows = "flake-parts";
-  inputs.clan-core.inputs.disko.follows = "";
   inputs.clan-core.inputs.nixos-images.follows = "";
-  inputs.clan-core.inputs.sops-nix.follows = "";
 
   outputs = { self, nixpkgs, clan-core, ... }: {
     inherit (clan-core.lib.buildClan {
@@ -27,6 +28,7 @@
         imports = [
           self.nixosModules.controller
           self.nixosModules.hosts
+          self.nixosModules.mesher
           ./machines/controller/configuration.nix
         ];
         clan.networking.zerotier = {
@@ -114,6 +116,18 @@
               ${clan-core.packages.${pkgs.system}.zerotier-members}/bin/zerotier-members allow ${host.address}
             '') (nixpkgs.lib.attrValues self.lib.hosts)}
           '';
+        };
+      };
+      mesher = {
+        imports = [
+          self.inputs.data-mesher.nixosModules.default
+        ];
+        services.data-mesher = {
+          enable = true;
+          bootstrapPeers = [ "http://controller.n:7331" ];
+          interface = "nether";
+          openFirewall = true;
+          logLevel = "DEBUG";
         };
       };
     };
