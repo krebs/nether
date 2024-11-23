@@ -21,7 +21,7 @@
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
-    flake = "github:lassulus/nether#controller";
+    flake = "github:krebs/nether#controller";
     dates = "*:0/10:00";
     flags = [ "--refresh" ];
   };
